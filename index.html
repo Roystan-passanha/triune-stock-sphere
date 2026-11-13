@@ -3,349 +3,480 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Triune stock sphere, a concept by Roystan Passanha</title>
-<meta name="description" content="Concept demo: Triune's oilfield and industrial product lines on a sphere you can spin, with a quote list. Not the official Triune site.">
+<title>Triune quote desk, a concept by Roystan Passanha</title>
+<meta name="description" content="Concept demo: paste a parts list and have it matched to Triune's catalogue, or browse products by where they are used on a rig. Not the official Triune site.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Lato:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --maroon:#660D1A; --oxide:#A3202E; --steel:#E4E8EB; --plate:#FFFFFF;
-  --gun:#1B2730; --mute:#5B6770; --line:#C9D0D5;
-  --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --maroon:#660D1A; --oxide:#A3202E; --steel:#E7EBEE; --gun:#1B2730; --mute:#5B6770; --line:#CCD3D8;
+  --ok:#1E7468; --warn:#9A6200; --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
   --body:Lato,system-ui,-apple-system,"Segoe UI",sans-serif;
-  --R:300px;
 }
 *{box-sizing:border-box}
+html{scroll-behavior:smooth}
 html,body{margin:0}
-body{font-family:var(--body);color:var(--gun);background:var(--steel);line-height:1.5;-webkit-font-smoothing:antialiased}
-button,input{font:inherit;color:inherit}
+body{font-family:var(--body);color:var(--gun);background:#fff;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit;color:inherit}
 a{color:var(--maroon)}
 :focus-visible{outline:3px solid var(--oxide);outline-offset:2px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 28px}
 
 .notice{background:var(--gun);color:#fff;font-size:13px;padding:6px 16px;text-align:center}
 .notice a{color:#fff}
-
-.stage{position:relative;height:calc(100svh - 32px);min-height:600px;overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none}
-.bar{position:absolute;inset:0 0 auto 0;display:flex;align-items:center;justify-content:space-between;padding:18px 28px;z-index:5}
-.mark{font-family:var(--display);font-weight:800;font-size:30px;letter-spacing:.01em;color:var(--maroon);line-height:1}
-.mark small{display:block;font-family:var(--body);font-weight:400;font-size:12px;letter-spacing:0;color:var(--mute);margin-top:2px}
-.listbtn{white-space:nowrap;background:var(--maroon);color:#fff;border:0;border-radius:999px;padding:10px 18px;font-weight:700;cursor:pointer;display:flex;gap:10px;align-items:center}
+.bar{display:flex;align-items:center;justify-content:space-between;padding-top:18px;padding-bottom:6px}
+.mark{font-family:var(--display);font-weight:800;font-size:32px;color:var(--maroon);line-height:1}
+.mark small{display:block;font-family:var(--body);font-weight:400;font-size:12px;color:var(--mute);margin-top:2px}
+.btn{border:0;border-radius:999px;padding:11px 20px;font-weight:700;cursor:pointer;white-space:nowrap}
+.btn.main{background:var(--maroon);color:#fff}
+.btn.main:hover{background:#4f0a14}
+.btn.ghost{background:none;border:1.5px solid var(--gun)}
+.btn.text{background:none;padding:11px 6px;color:var(--maroon);text-decoration:underline}
+.btn[disabled]{background:var(--line);color:var(--mute);cursor:default;border-color:var(--line)}
+.listbtn{display:flex;gap:10px;align-items:center}
 .listbtn b{background:#fff;color:var(--maroon);border-radius:999px;min-width:24px;height:24px;display:grid;place-items:center;font-size:13px;padding:0 6px}
 
-.say{position:absolute;z-index:1;font-family:var(--display);font-weight:800;line-height:.92;margin:0;color:var(--gun);font-size:clamp(38px,5.6vw,84px);pointer-events:none}
-.say.a{left:28px;top:92px}
-.say.b{right:28px;bottom:104px;text-align:right;color:var(--maroon)}
-.how{position:absolute;z-index:3;left:28px;bottom:104px;max-width:30ch;margin:0;font-size:15px;color:var(--mute);pointer-events:none}
+.hero{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:44px;align-items:start;padding-top:26px;padding-bottom:40px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(40px,4.9vw,70px);line-height:.95;margin:0 0 14px}
+.lede{margin:0 0 22px;font-size:17px;color:var(--mute);max-width:46ch}
+.rfq label{display:block;font-weight:700;margin-bottom:8px}
+.rfq textarea{display:block;width:100%;min-height:210px;resize:vertical;border:1.5px solid var(--gun);border-radius:10px;padding:14px;font-size:15px;line-height:1.55;background:#fff}
+.rfq .row{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.rfq .fine{font-size:13px;color:var(--mute);margin:12px 0 0}
 
-.scene{position:absolute;inset:0;z-index:2;display:grid;place-items:center;perspective:1500px;cursor:grab}
-.scene.dragging{cursor:grabbing}
-.sphere{position:relative;width:0;height:0;transform-style:preserve-3d;will-change:transform}
-.tile{position:absolute;left:calc(var(--R)*-.19);top:calc(var(--R)*-.19);width:calc(var(--R)*.38);height:calc(var(--R)*.38);
-  border:0;padding:8%;border-radius:6%;cursor:pointer;backface-visibility:hidden;-webkit-backface-visibility:hidden;
-  display:flex;flex-direction:column;justify-content:space-between;text-align:left;
-  font-size:calc(var(--R)*.052);box-shadow:inset 0 0 0 1px rgba(27,39,48,.14);transition:opacity .25s, filter .25s}
-.tile svg{width:34%;height:34%;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.tile span{font-family:var(--display);font-weight:800;font-size:1.25em;line-height:1}
-.tile.brand{background:var(--plate);color:var(--gun);justify-content:center;align-items:center;text-align:center}
-.tile.brand span{font-family:var(--body);font-weight:700;font-size:1.02em;line-height:1.15}
-.tile.pole{background:var(--maroon);color:#fff;justify-content:center;align-items:center}
-.tile.pole span{font-size:1.9em}
-.tile.off{opacity:.12;filter:saturate(.2)}
-.tile.in{box-shadow:inset 0 0 0 calc(var(--R)*.014) var(--gun)}
-.tile.brand.in{box-shadow:inset 0 0 0 calc(var(--R)*.014) var(--maroon)}
-.shade{position:absolute;left:50%;top:50%;width:calc(var(--R)*2.1);height:calc(var(--R)*2.1);transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;z-index:2;
-  background:radial-gradient(circle at 42% 36%,rgba(255,255,255,.10) 0,rgba(255,255,255,0) 38%,rgba(27,39,48,.10) 72%,rgba(27,39,48,.42) 100%)}
-.floor{position:absolute;left:50%;top:calc(50% + var(--R)*1.12);width:calc(var(--R)*1.5);height:calc(var(--R)*.12);transform:translate(-50%,0);border-radius:50%;background:radial-gradient(closest-side,rgba(27,39,48,.28),rgba(27,39,48,0));pointer-events:none}
-
-.chips{position:absolute;z-index:4;left:0;right:0;bottom:22px;display:flex;gap:8px;justify-content:center;flex-wrap:nowrap;overflow-x:auto;padding:6px 20px;scrollbar-width:none}
-.chips::-webkit-scrollbar{display:none}
-.chip{flex:none;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:8px;white-space:nowrap}
-.chip i{width:10px;height:10px;border-radius:2px;display:block}
+.rigbox{background:var(--steel);border-radius:16px;padding:18px 14px 12px}
+.rigbox h2{font-size:16px;margin:0 6px 2px}
+.rigbox p{font-size:14px;color:var(--mute);margin:0 6px 4px}
+#rig{display:block;width:100%;height:auto}
+#rig .base,#rig .art{fill:none;stroke:var(--gun);stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+#rig .thin{stroke-width:1.6}
+#rig .w{fill:#fff}
+#rig .solid{fill:var(--gun)}
+#rig .gnd{stroke:var(--gun);stroke-width:3}
+#rig .hit{fill:transparent;stroke:none}
+#rig .zone{cursor:pointer;outline:none}
+#rig .zone:hover .art,#rig .zone.on .art,#rig .zone:focus-visible .art{stroke:var(--maroon)}
+#rig .zone:hover .solid,#rig .zone.on .solid,#rig .zone:focus-visible .solid{fill:var(--maroon)}
+#rig .zone.on .w,#rig .zone:hover .w{fill:#F6DDE0}
+#rig .lead{stroke:var(--gun);stroke-width:1.4;stroke-dasharray:3 4;fill:none}
+#rig .dot{fill:var(--maroon);stroke:#fff;stroke-width:2.5}
+#rig .ring{fill:none;stroke:var(--maroon);stroke-width:2;opacity:0;transform-box:fill-box;transform-origin:center;animation:ping 2.6s ease-out infinite}
+#rig .pill rect{fill:#fff;stroke:var(--gun);stroke-width:1.6}
+#rig .pill text{font-family:var(--body);font-weight:700;font-size:21px;fill:var(--gun)}
+#rig .zone.on .pill rect,#rig .zone:hover .pill rect,#rig .zone:focus-visible .pill rect{fill:var(--maroon);stroke:var(--maroon)}
+#rig .zone.on .pill text,#rig .zone:hover .pill text,#rig .zone:focus-visible .pill text{fill:#fff}
+@keyframes ping{0%{opacity:.7;transform:scale(.6)}70%,100%{opacity:0;transform:scale(2.4)}}
+.zchips{display:flex;gap:8px;overflow-x:auto;padding:8px 4px 4px;scrollbar-width:none}
+.zchips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 13px;font-size:14px;cursor:pointer;white-space:nowrap}
 .chip[aria-pressed="true"]{background:var(--gun);color:#fff;border-color:var(--gun)}
 
-.drawer{position:fixed;z-index:20;top:0;right:0;bottom:0;width:min(400px,100vw);background:#fff;box-shadow:-18px 0 50px rgba(27,39,48,.22);
-  transform:translateX(105%);transition:transform .28s cubic-bezier(.2,.7,.2,1);display:flex;flex-direction:column;visibility:hidden}
-.drawer.open{transform:none;visibility:visible}
-.drawer header{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--line)}
-.drawer h2{font-family:var(--display);font-weight:800;font-size:28px;margin:0;line-height:1}
-.x{border:0;background:none;font-size:26px;line-height:1;cursor:pointer;padding:4px 8px}
-.body{padding:20px 22px;overflow:auto;flex:1}
-.pick{border-radius:10px;padding:18px;margin-bottom:22px;color:#fff}
-.pick .fam{font-size:13px;opacity:.85;margin:0 0 4px}
-.pick h3{font-family:var(--display);font-weight:800;font-size:30px;line-height:1;margin:0 0 10px}
-.pick p{margin:0 0 14px;font-size:14px}
-.pick button{background:#fff;color:var(--gun);border:0;border-radius:999px;padding:9px 16px;font-weight:700;cursor:pointer}
-.pick button[disabled]{opacity:.7;cursor:default}
-.body h4{font-size:15px;margin:0 0 10px}
-.empty{color:var(--mute);font-size:14px;border:1px dashed var(--line);border-radius:10px;padding:16px}
-.row{border-bottom:1px solid var(--line);padding:12px 0;display:grid;grid-template-columns:1fr auto;gap:8px 10px;align-items:center}
-.row strong{font-size:15px}
-.row .rm{border:0;background:none;color:var(--oxide);cursor:pointer;font-size:13px;padding:4px}
-.row .f{grid-column:1/-1;display:grid;grid-template-columns:72px 1fr;gap:8px}
-.row input{border:1px solid var(--line);border-radius:6px;padding:7px 9px;width:100%;font-size:14px}
-.foot{padding:16px 22px;border-top:1px solid var(--line)}
-.send{width:100%;background:var(--maroon);color:#fff;border:0;border-radius:999px;padding:12px;font-weight:700;cursor:pointer}
-.send[disabled]{background:var(--line);color:var(--mute);cursor:default}
-.foot p{font-size:12.5px;color:var(--mute);margin:10px 0 0}
+.band{background:var(--steel);padding:36px 0}
+.band h2,.browse h2{font-family:var(--display);font-weight:800;font-size:clamp(30px,3.4vw,44px);line-height:1;margin:0}
+.sum{margin:8px 0 18px;color:var(--mute)}
+.rows{background:#fff;border-radius:12px;border:1px solid var(--line);overflow:hidden}
+.li{display:grid;grid-template-columns:64px minmax(0,1fr) 88px auto;gap:14px;align-items:center;padding:12px 16px;border-top:1px solid var(--line)}
+.li:first-child{border-top:0}
+.li img,.li .noimg{width:64px;height:64px;object-fit:contain;border-radius:8px;background:#fff;border:1px solid var(--line)}
+.li .noimg{display:grid;place-items:center;text-align:center;font-size:11px;line-height:1.2;font-weight:700;color:var(--mute);background:var(--steel)}
+.li h3{font-size:16px;margin:0;line-height:1.25}
+.li .meta{font-size:13.5px;color:var(--mute);margin:2px 0 0}
+.li .src{font-size:13px;color:var(--mute);margin:4px 0 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tag{display:inline-block;font-size:12.5px;font-weight:700;border-radius:6px;padding:2px 8px;margin-right:8px}
+.tag.part,.tag.pick{background:#DDEFEC;color:var(--ok)}
+.tag.name{background:#E3ECF3;color:#2C5574}
+.tag.check{background:#FBEBCB;color:var(--warn)}
+.tag.none{background:#F6DDE0;color:var(--oxide)}
+.li select{max-width:100%;border:1px solid var(--line);border-radius:6px;padding:4px 6px;font-size:13px;margin-top:6px;background:#fff}
+.li input{width:88px;border:1px solid var(--line);border-radius:6px;padding:8px 9px;font-size:15px}
+.li .rm{border:0;background:none;color:var(--oxide);cursor:pointer;font-size:13px;padding:6px}
+.acts{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}
+.acts p{margin:0;font-size:13px;color:var(--mute);flex:1 1 260px}
 
-.about{background:#fff;padding:56px 28px}
-.about .in{max-width:1080px;margin:0 auto;display:grid;grid-template-columns:1.1fr 1fr;gap:48px}
-.about h2{font-family:var(--display);font-weight:800;font-size:clamp(32px,4vw,52px);line-height:1;margin:0 0 16px}
-.about p{margin:0 0 14px;max-width:62ch}
-.about ul{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:8px}
-.about li{border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:14px}
-.about h3{font-size:15px;margin:0 0 10px}
-.about .by{margin-top:26px;font-size:14px;color:var(--mute)}
+.browse{padding:44px 0 56px}
+.bh{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:6px}
+.bh p{margin:6px 0 0;color:var(--mute)}
+.bh input{border:1.5px solid var(--gun);border-radius:999px;padding:10px 16px;width:min(320px,100%)}
+.cats{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.card{border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;background:#fff}
+.card .ph{aspect-ratio:1/1;background:#fff;border-bottom:1px solid var(--line);display:grid;place-items:center;color:var(--mute);font-size:13px}
+.card img{width:100%;height:100%;object-fit:contain;display:block}
+.card .cb{padding:12px 14px 14px;display:flex;flex-direction:column;gap:4px;flex:1}
+.card .meta{font-size:12.5px;color:var(--mute);margin:0}
+.card h3{font-size:15px;line-height:1.25;margin:0}
+.card h3 a{color:inherit;text-decoration:none}
+.card h3 a:hover{text-decoration:underline}
+.card .pn{font-size:13px;margin:0;color:var(--gun)}
+.card .btn{margin-top:auto;padding:8px 14px;font-size:14px;align-self:flex-start}
+.card .sp{flex:1;min-height:6px}
+.more{margin-top:20px;text-align:center}
+.none{color:var(--mute);border:1px dashed var(--line);border-radius:12px;padding:20px}
 
-@media (max-width:760px){
-  .bar{padding:14px 16px}
+footer{background:var(--gun);color:#fff;padding:30px 0;font-size:14px}
+footer a{color:#fff}
+footer p{margin:0 0 6px;max-width:80ch}
+
+@media (max-width:900px){
+  .wrap{padding:0 16px}
+  .hero{grid-template-columns:1fr;gap:26px;padding-top:14px}
   .mark small{display:none}
-  .say.a{left:16px;top:70px}
-  .say.b{right:16px;bottom:118px}
-  .how{display:none}
-  .about .in{grid-template-columns:1fr;gap:28px}
-  .chips{justify-content:flex-start}
-  .drawer{top:auto;height:82svh;border-radius:16px 16px 0 0;transform:translateY(105%)}
+  #rig .pill,#rig .lead{display:none}
+  .li{grid-template-columns:48px minmax(0,1fr);gap:10px}
+  .li img,.li .noimg{width:48px;height:48px}
+  .li .q{grid-column:2;display:flex;gap:10px;align-items:center}
+  .li .rm{grid-column:2;justify-self:start;padding-left:0}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 }
-@media (prefers-reduced-motion:reduce){.drawer,.tile{transition:none}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}#rig .ring{animation:none}}
 </style>
 </head>
 <body>
 <div class="notice">Concept demo by Roystan Passanha. Not the official Triune site. The real one is at <a href="https://triuneme.com" rel="noopener">triuneme.com</a>.</div>
 
+<header class="wrap bar">
+  <div class="mark">Triune<small>Oilfield and industrial supplies, Dubai</small></div>
+  <button class="btn main listbtn" id="toList" type="button">Quote list <b id="count">0</b></button>
+</header>
+
 <main>
-<section class="stage" aria-label="Triune product lines on a sphere">
-  <div class="bar">
-    <div class="mark">Triune<small>Oilfield and industrial supplies, Dubai</small></div>
-    <button class="listbtn" id="openList" type="button">Quote list <b id="count">0</b></button>
+<section class="wrap hero">
+  <div class="rfq">
+    <h1>Paste your parts list. We match it to stock.</h1>
+    <p class="lede">Copy the lines from your RFQ email or spreadsheet. Part numbers, names and quantities can be in any order.</p>
+    <label for="paste">Your parts list</label>
+    <textarea id="paste" spellcheck="false" placeholder="10 x Cat 1R-0756 fuel filter&#10;Shell Tellus S2 M 46 - 4 drums&#10;FA310022, 5 pcs"></textarea>
+    <div class="row">
+      <button class="btn main" id="match" type="button">Match my list</button>
+      <button class="btn text" id="sample" type="button">Use a sample list</button>
+    </div>
+    <p class="fine" id="fine">Checked against the <span id="total">447</span> products listed on triuneme.com. Nothing you type leaves this page.</p>
   </div>
 
-  <h1 class="say a">Parts you<br>can find</h1>
-  <p class="say b" aria-hidden="true">Quotes you<br>get today</p>
-  <p class="how">Drag the sphere. Each plate is a product line or a brand Triune supplies from its Dubai warehouse. Pick one to add it to a quote list.</p>
+  <div class="rigbox">
+    <h2>Or pick a part of the rig</h2>
+    <p>Each area opens the products used there.</p>
+    <svg id="rig" viewBox="0 0 1000 600" role="group" aria-label="Drilling rig. Choose an area to see its products.">
+      <path class="gnd" d="M0 540H1000"/>
+      <g class="base">
+        <path d="M400 392L436 62M500 392L464 62"/>
+        <path class="thin" d="M400 392L494.7 350L410.7 300L484 250L421.3 200L473.4 150L432 100L464 62M405.3 350H494.7M410.7 300H489.3M416 250H484M421.3 200H478.7M426.6 150H473.4M432 100H468"/>
+        <path class="thin" d="M450 62V235M450 305V392"/>
+        <rect class="w" x="438" y="235" width="24" height="26"/>
+        <rect class="w" x="434" y="265" width="32" height="40"/>
+        <path class="thin" d="M508 392V262Q506 232 484 262L466 282"/>
+        <path d="M340 402V540M380 402V540M540 402V540M580 402V540"/>
+        <path class="thin" d="M340 402L380 540M380 402L340 540M540 402L580 540M580 402L540 540"/>
+        <path d="M300 402L262 540M312 402L276 540"/>
+        <path d="M110 522H250M122 522V540M238 522V540"/>
+        <path class="thin w" d="M125 507a7 7 0 1 0 .1 0zM141 507a7 7 0 1 0 .1 0zM157 507a7 7 0 1 0 .1 0zM173 507a7 7 0 1 0 .1 0zM189 507a7 7 0 1 0 .1 0zM205 507a7 7 0 1 0 .1 0zM221 507a7 7 0 1 0 .1 0zM237 507a7 7 0 1 0 .1 0zM133 493a7 7 0 1 0 .1 0zM149 493a7 7 0 1 0 .1 0zM165 493a7 7 0 1 0 .1 0zM181 493a7 7 0 1 0 .1 0zM197 493a7 7 0 1 0 .1 0zM213 493a7 7 0 1 0 .1 0zM229 493a7 7 0 1 0 .1 0z"/>
+        <rect class="solid" x="296" y="392" width="308" height="10" style="stroke:none"/>
+      </g>
 
-  <div class="scene" id="scene">
-    <div class="floor"></div>
-    <div class="sphere" id="sphere"></div>
-    <div class="shade"></div>
+      <g class="zone" data-z="height">
+        <rect class="hit" x="412" y="30" width="76" height="112"/>
+        <rect class="art w" x="426" y="44" width="48" height="18"/>
+        <path class="art" d="M432 100L436 62M468 100L464 62M450 44V26M450 26h16l-5 6 5 6h-16"/>
+      </g>
+      <g class="zone" data-z="board">
+        <rect class="hit" x="362" y="124" width="70" height="60"/>
+        <path class="art" d="M372 174H426M372 174V152H392"/>
+        <path class="art thin" d="M394 150a6 6 0 1 0 .1 0zM394 156V172M386 162H402M400 158L424 152"/>
+      </g>
+      <g class="zone" data-z="crew">
+        <rect class="hit" x="296" y="340" width="96" height="54"/>
+        <rect class="art w" x="330" y="352" width="56" height="40"/>
+        <rect class="art thin" x="340" y="362" width="18" height="12"/>
+        <path class="art thin" d="M312 361a6 6 0 1 0 .1 0zM305 364H319M312 373V384M304 378H320M312 384L306 392M312 384L318 392"/>
+      </g>
+      <g class="zone" data-z="floor">
+        <rect class="hit" x="396" y="340" width="204" height="54"/>
+        <rect class="art w" x="522" y="358" width="64" height="34"/>
+        <path class="art thin" d="M554 366a10 10 0 1 0 .1 0zM436 386h28v6h-28z"/>
+      </g>
+      <g class="zone" data-z="bop">
+        <rect class="hit" x="412" y="410" width="96" height="130"/>
+        <path class="art thin" d="M450 402V440M476 493H502"/>
+        <rect class="art w" x="430" y="440" width="40" height="22" rx="10"/>
+        <rect class="art w" x="424" y="464" width="52" height="18"/>
+        <rect class="art w" x="424" y="484" width="52" height="18"/>
+        <rect class="art w" x="438" y="504" width="24" height="14"/>
+        <rect class="art w" x="430" y="518" width="40" height="22"/>
+      </g>
+      <g class="zone" data-z="mud">
+        <rect class="hit" x="596" y="440" width="214" height="100"/>
+        <path class="art thin" d="M640 492V455H598V402"/>
+        <rect class="art w" x="608" y="492" width="40" height="48"/>
+        <rect class="art w" x="648" y="508" width="18" height="32"/>
+        <rect class="art w" x="676" y="492" width="40" height="48"/>
+        <rect class="art w" x="716" y="508" width="18" height="32"/>
+        <rect class="art w" x="746" y="478" width="60" height="62"/>
+        <path class="art thin" d="M746 498H806M746 518H806"/>
+      </g>
+      <g class="zone" data-z="engine">
+        <rect class="hit" x="814" y="430" width="150" height="110"/>
+        <rect class="art w" x="822" y="470" width="62" height="70" rx="4"/>
+        <rect class="art w" x="894" y="470" width="62" height="70" rx="4"/>
+        <path class="art" d="M840 470V442M912 470V442"/>
+        <path class="art thin" d="M832 492H874M832 504H874M832 516H874M904 492H946M904 504H946M904 516H946"/>
+      </g>
+      <g class="zone" data-z="lube">
+        <rect class="hit" x="18" y="452" width="80" height="88"/>
+        <rect class="art w" x="28" y="500" width="27" height="40" rx="3"/>
+        <rect class="art w" x="59" y="500" width="27" height="40" rx="3"/>
+        <rect class="art w" x="43" y="460" width="27" height="40" rx="3"/>
+        <path class="art thin" d="M28 513H55M28 527H55M59 513H86M59 527H86M43 473H70M43 487H70"/>
+      </g>
+    </svg>
+    <div class="zchips" id="zchips" role="group" aria-label="Rig areas"></div>
   </div>
-
-  <div class="chips" id="chips" role="group" aria-label="Show one product family"></div>
 </section>
 
-<section class="about">
-  <div class="in">
-    <div>
-      <h2>Seven product families, 60 and more brands, one list to send</h2>
-      <p>Triune General Trading LLC has supplied oil and gas, marine and industrial buyers across MENA for 20 years. It holds stock in the UAE and answers quotes the same working day.</p>
-      <p>This page is an idea for how buyers could browse that range: spin, pick the lines you need, add part numbers and quantities, then send one list.</p>
-      <p class="by">Built by Roystan Passanha as a pitch. Product families and brand names are taken from triuneme.com. Nothing typed here is sent anywhere.</p>
+<section class="band" id="list" hidden>
+  <div class="wrap">
+    <h2>Your quote list</h2>
+    <p class="sum" id="sum"></p>
+    <div class="rows" id="rows"></div>
+    <div class="acts">
+      <button class="btn main" id="copy" type="button">Copy list</button>
+      <button class="btn ghost" id="csv" type="button">Download CSV</button>
+      <button class="btn text" id="clear" type="button">Clear list</button>
+      <p id="note">In a live version this would go to Triune's sales desk. Here it stays on your screen.</p>
     </div>
-    <div>
-      <h3>Delivers to</h3>
-      <ul>
-        <li>UAE</li><li>Saudi Arabia</li><li>Oman</li><li>Qatar</li><li>Kuwait</li><li>Bahrain</li><li>Iraq</li><li>Egypt</li><li>Libya</li><li>Algeria</li><li>Tunisia</li><li>Morocco</li>
-      </ul>
-      <h3 style="margin-top:24px">Warehouse</h3>
-      <p>Warehouse No. 2, Plot No. 605, Street 10B, Ras Al Khor Industrial Area 2, Dubai, UAE</p>
+  </div>
+</section>
+
+<section class="browse" id="browse">
+  <div class="wrap">
+    <div class="bh">
+      <div><h2 id="zt"></h2><p id="zs"></p></div>
+      <input id="zf" type="search" placeholder="Filter by name, brand or part number" aria-label="Filter the products shown">
     </div>
+    <div class="cats" id="cats"></div>
+    <div class="grid" id="grid"></div>
+    <div class="more"><button class="btn ghost" id="more" type="button" hidden></button></div>
   </div>
 </section>
 </main>
 
-<aside class="drawer" id="drawer" aria-label="Quote list" aria-hidden="true">
-  <header><h2>Quote list</h2><button class="x" id="close" type="button" aria-label="Close quote list">&times;</button></header>
-  <div class="body">
-    <div id="pick"></div>
-    <h4>On your list</h4>
-    <div id="rows"></div>
+<footer>
+  <div class="wrap">
+    <p>Built by Roystan Passanha as a pitch for Triune General Trading LLC. Product names, part numbers and photos are read from <a href="https://triuneme.com" rel="noopener">triuneme.com</a>.</p>
+    <p>Triune's warehouse: Warehouse No. 2, Plot No. 605, Street 10B, Ras Al Khor Industrial Area 2, Dubai, UAE.</p>
   </div>
-  <div class="foot">
-    <button class="send" id="copy" type="button" disabled>Copy list</button>
-    <p id="copyNote">In a live version this button would send the list to Triune on WhatsApp. Here it only copies the text.</p>
-  </div>
-</aside>
+</footer>
 
+<script src="catalog.js"></script>
 <script>
 (function(){
-var FAM={
-  lub:{name:'Lubricants, fluids and chemicals',short:'Lubricants',bg:'#C4861A',ink:'#1B2730',icon:'<path d="M12 3c3.5 4.5 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 2.5-6.5 6-11z"/>'},
-  rig:{name:'Rig tools and drilling equipment',short:'Rig tools',bg:'#1B2730',ink:'#FFFFFF',icon:'<path d="M12 2.5l8.2 4.75v9.5L12 21.5l-8.2-4.75v-9.5z"/><circle cx="12" cy="12" r="3.4"/>'},
-  flow:{name:'Flowline and pressure control',short:'Flowline',bg:'#660D1A',ink:'#FFFFFF',icon:'<path d="M2 9h5v6H2zM17 9h5v6h-5zM7 10.5h10v3H7zM12 10.5V5.5M9 5.5h6"/>'},
-  spare:{name:'Rig spare parts and filters',short:'Spares and filters',bg:'#3B6787',ink:'#FFFFFF',icon:'<path d="M6 4.5h12v15H6zM6 9h12M6 15h12M10 2.5h4v2h-4z"/>'},
-  ppe:{name:'PPE and safety',short:'PPE',bg:'#F0B90B',ink:'#1B2730',icon:'<path d="M4.5 16a7.5 7.5 0 0 1 15 0zM2.5 16h19v2.5h-19zM12 8.5V12"/>'},
-  fall:{name:'Fall protection',short:'Fall protection',bg:'#CF5A1D',ink:'#FFFFFF',icon:'<path d="M9 3h6a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zM19 9l-5 3"/>'},
-  dop:{name:'Dropped object prevention',short:'Dropped objects',bg:'#1E7468',ink:'#FFFFFF',icon:'<rect x="3" y="8" width="11" height="8" rx="4"/><rect x="10" y="8" width="11" height="8" rx="4"/>'}
-};
-var LINES=[
- ['lub','Greases','Industrial greases'],['lub','Hydraulic oils','Hydraulic oils'],['lub','Gear oils','Gear oils'],['lub','Thread compounds','Drilling and thread compounds'],['lub','Compressor oils','Compressor oils and fluids'],
- ['rig','Pipe handling','Pipe handling tools'],['rig','Hands-free tools','Hands-free tools'],['rig','Tong and slip dies','Tong dies, slip dies and inserts'],['rig','Rotary slips','Rotary slips and safety clamps'],['rig','Subs and IBOP','Drill stem subs and IBOP valves'],
- ['flow','1502 hammer unions','1502 hammer union fittings and flanges'],['flow','Plug and mud valves','Plug valves, mud valves and relief valves'],['flow','BOP test units','BOP test units'],['flow','HP hoses','High pressure hoses and hose loops'],['flow','Mud gauges','Mud pressure gauges and sensors'],
- ['spare','CAT filters','Caterpillar filters'],['spare','Fuel filters','Fuel filters and water separators'],['spare','Air-O-Unions','Air-O-Union and Seal-O-Grip unions'],
- ['ppe','Safety gloves','Impact and cut-resistant safety gloves'],['ppe','Safety glasses','Safety glasses'],['ppe','Rigger boots','Safety shoes and rigger boots'],['ppe','Head and hearing','Head, hearing and respiratory protection'],['ppe','Coveralls','Work coveralls'],
- ['fall','Harnesses','Harnesses'],['fall','Lanyards and blocks','Lanyards and blocks'],['fall','Anchorage','Anchorage'],['fall','Rescue','Rescue equipment'],['fall','Accessories','Fall protection accessories'],
- ['dop','Tethered tools','Tethered tools'],['dop','Tool lanyards','Tool lanyards'],['dop','Tethered kits','Tethered tool kits'],['dop','Tool belts','Tool belts'],['dop','Tool tethering','Tool tethering'],['dop','Tool bags','Tool bags']
-];
-var BRANDS=['Shell','Mobil','Chevron','Bestolife','Jet-Lube','Quaker Houghton','Lubriplate','Caterpillar','Parker Racor','Sullair','Ingersoll Rand','3M','3M DBI-SALA','MSA','Honeywell','Howard Leight','Mechanix Wear','Ironclad','Ringers Gloves','Vaultex','Tool@rrest Global','Fall@rrest Global','Oteco','Demco','MD Totco','OFITE','Kemper','Dualco','Janki Oil Tools','Keystone Energy Tools','Crescent Tools','Slide Sledge','Strong Hold','Crown Oilfield Instrumentation','Kitagawa America','Offshore Handling Systems'];
-
-// interleave lines and brands so the sphere looks mixed
-var items=[],i=0,j=0;
-while(i<LINES.length||j<BRANDS.length){
-  if(i<LINES.length){var l=LINES[i++];items.push({id:'l'+i,type:'line',fam:l[0],label:l[1],full:l[2]});}
-  if(j<BRANDS.length){var b=BRANDS[j++];items.push({id:'b'+j,type:'brand',fam:'brand',label:b,full:b});}
-}
-var byId={};items.forEach(function(it){byId[it.id]=it;});
-
-var sphere=document.getElementById('sphere'),scene=document.getElementById('scene');
-var RINGS=[[60,8],[36,12],[12,15],[-12,15],[-36,12],[-60,8]];
-var k=0;
-RINGS.forEach(function(r,ri){
-  for(var n=0;n<r[1];n++){
-    var it=items[k++];if(!it)return;
-    it.lat=r[0];it.lon=(360/r[1])*n+(ri%2?360/r[1]/2:0);
-    sphere.appendChild(makeTile(it));
-  }
-});
-[90,-90].forEach(function(lat){
-  var d=document.createElement('div');d.className='tile pole';d.setAttribute('aria-hidden','true');
-  d.innerHTML='<span>Triune</span>';
-  d.style.transform='rotateX('+lat+'deg) translateZ(var(--R))';
-  sphere.appendChild(d);
-});
-
-function makeTile(it){
-  var t=document.createElement('button');t.type='button';t.className='tile '+(it.type==='brand'?'brand':'line');
-  t.dataset.id=it.id;t.dataset.fam=it.fam;
-  if(it.type==='line'){
-    var f=FAM[it.fam];t.style.background=f.bg;t.style.color=f.ink;
-    t.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true">'+f.icon+'</svg><span>'+it.label+'</span>';
-    t.setAttribute('aria-label',it.full+', '+f.name);
-  }else{
-    t.innerHTML='<span>'+it.label+'</span>';
-    t.setAttribute('aria-label',it.label+', brand');
-  }
-  t.style.transform='rotateY('+it.lon+'deg) rotateX('+it.lat+'deg) translateZ(var(--R))';
-  it.el=t;return t;
-}
-
-// sizing
-function size(){
-  var w=scene.clientWidth,h=scene.clientHeight;
-  var R=Math.min(Math.max(w*0.3,190),h*0.36,340);
-  document.documentElement.style.setProperty('--R',R+'px');
-}
-size();addEventListener('resize',size);
-
-// rotation
-var rx=-14,ry=20,vx=0,vy=0,target=null,down=null,dragging=false,idle=0;
-var still=matchMedia('(prefers-reduced-motion: reduce)').matches;
-function paint(){sphere.style.transform='rotateX('+rx+'deg) rotateY('+ry+'deg)';}
-function tick(){
-  if(target){
-    var dy=((target.ry-ry)%360+540)%360-180,dx=target.rx-rx;
-    ry+=dy*0.12;rx+=dx*0.12;
-    if(Math.abs(dy)<0.2&&Math.abs(dx)<0.2)target=null;
-  }else if(!dragging){
-    ry+=vy;rx+=vx;vx*=0.94;vy*=0.94;
-    if(Math.abs(vy)<0.02)vy=0;if(Math.abs(vx)<0.02)vx=0;
-    if(!still&&!drawer.classList.contains('open')&&performance.now()-idle>2500&&!vy)ry+=0.06;
-  }
-  rx=Math.max(-70,Math.min(70,rx));
-  paint();requestAnimationFrame(tick);
-}
-scene.addEventListener('pointerdown',function(e){down={x:e.clientX,y:e.clientY,px:e.clientX,py:e.clientY};target=null;vx=vy=0;});
-scene.addEventListener('pointermove',function(e){
-  if(!down)return;
-  if(!dragging&&Math.hypot(e.clientX-down.x,e.clientY-down.y)>6){dragging=true;scene.classList.add('dragging');try{scene.setPointerCapture(e.pointerId);}catch(_){}}
-  if(dragging){
-    vy=(e.clientX-down.px)*0.32;vx=-(e.clientY-down.py)*0.32;
-    ry+=vy;rx+=vx;down.px=e.clientX;down.py=e.clientY;
-  }
-});
-function up(){ if(!down)return;down=null;idle=performance.now();scene.classList.remove('dragging');setTimeout(function(){dragging=false;},0);}
-scene.addEventListener('pointerup',up);scene.addEventListener('pointercancel',up);
-scene.addEventListener('click',function(e){
-  if(dragging){e.stopPropagation();e.preventDefault();return;}
-  var t=e.target.closest('.tile[data-id]');if(t)select(byId[t.dataset.id]);
-},true);
-sphere.addEventListener('focusin',function(e){
-  var t=e.target.closest('.tile[data-id]');if(!t||down)return;
-  var it=byId[t.dataset.id];target={rx:-it.lat*0.6,ry:-it.lon};
-});
-scene.addEventListener('keydown',function(e){
-  var m={ArrowLeft:[0,-12],ArrowRight:[0,12],ArrowUp:[8,0],ArrowDown:[-8,0]}[e.key];
-  if(m){target=null;rx+=m[0];ry+=m[1];idle=performance.now();e.preventDefault();}
-});
-
-// family chips
-var chips=document.getElementById('chips'),filter='all';
-var defs=[['all','Everything',null]].concat(Object.keys(FAM).map(function(key){return [key,FAM[key].short,FAM[key].bg];})).concat([['brand','Brands','#FFFFFF']]);
-defs.forEach(function(d){
-  var c=document.createElement('button');c.type='button';c.className='chip';c.dataset.f=d[0];
-  c.setAttribute('aria-pressed',d[0]==='all'?'true':'false');
-  c.innerHTML=(d[2]?'<i style="background:'+d[2]+';'+(d[0]==='brand'?'box-shadow:inset 0 0 0 1px #1B2730':'')+'"></i>':'')+d[1];
-  c.addEventListener('click',function(){
-    filter=d[0];
-    [].forEach.call(chips.children,function(x){x.setAttribute('aria-pressed',x===c?'true':'false');});
-    items.forEach(function(it){it.el.classList.toggle('off',filter!=='all'&&it.fam!==filter);});
-    var first=items.filter(function(it){return it.fam===filter;})[0];
-    if(first)target={rx:-first.lat*0.6,ry:-first.lon};
-  });
-  chips.appendChild(c);
-});
-
-// quote list
-var drawer=document.getElementById('drawer'),pick=document.getElementById('pick'),rows=document.getElementById('rows');
-var count=document.getElementById('count'),copy=document.getElementById('copy'),note=document.getElementById('copyNote');
-var list=[],current=null,opener=null;
-try{list=(JSON.parse(localStorage.getItem('triune-concept-list'))||[]).filter(function(r){return byId[r.id];});}catch(_){list=[];}
-function save(){try{localStorage.setItem('triune-concept-list',JSON.stringify(list));}catch(_){}}
-function inList(id){return list.some(function(r){return r.id===id;});}
+var SITE='https://triuneme.com';
+var C=(window.TRIUNE_CATALOG||[]).map(function(x,i){return {id:i,slug:x.s,title:x.t,brand:x.b,part:x.p,img:x.i,cat:x.c};});
+var $=function(id){return document.getElementById(id);};
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+$('total').textContent=C.length;
 
-function open(){drawer.classList.add('open');drawer.setAttribute('aria-hidden','false');document.getElementById('close').focus();}
-function close(){drawer.classList.remove('open');drawer.setAttribute('aria-hidden','true');idle=performance.now();if(opener&&opener.focus)opener.focus({preventScroll:true});}
-function select(it){current=it;opener=it.el;target={rx:-it.lat*0.6,ry:-it.lon};render();open();}
-
-function render(){
-  count.textContent=list.length;
-  items.forEach(function(it){it.el.classList.toggle('in',inList(it.id));});
-  if(current){
-    var f=FAM[current.fam],added=inList(current.id);
-    var sib=current.type==='line'?LINES.filter(function(l){return l[0]===current.fam&&l[2]!==current.full;}).map(function(l){return l[2];}):[];
-    pick.innerHTML='<div class="pick" style="background:'+(f?f.bg:'#1B2730')+';color:'+(f?f.ink:'#fff')+'">'+
-      '<p class="fam">'+(f?esc(f.name):'Brand listed on triuneme.com')+'</p><h3>'+esc(current.full)+'</h3>'+
-      (sib.length?'<p>Same family: '+esc(sib.join('; '))+'.</p>':'<p>Add it, then type the part numbers you need from this brand.</p>')+
-      '<button type="button" id="add"'+(added?' disabled':'')+'>'+(added?'On your list':'Add to quote list')+'</button></div>';
-    var a=document.getElementById('add');
-    if(a)a.addEventListener('click',function(){if(!inList(current.id)){list.push({id:current.id,qty:1,note:''});save();render();}});
-  }else pick.innerHTML='';
-  if(!list.length){rows.innerHTML='<p class="empty">Nothing here yet. Pick a plate on the sphere and add it.</p>';}
-  else{
-    rows.innerHTML=list.map(function(r,n){var it=byId[r.id];
-      return '<div class="row"><strong>'+esc(it.full)+'</strong><button type="button" class="rm" data-n="'+n+'">Remove</button>'+
-      '<div class="f"><input type="number" min="1" value="'+r.qty+'" data-n="'+n+'" data-k="qty" aria-label="Quantity for '+esc(it.full)+'">'+
-      '<input type="text" value="'+esc(r.note)+'" data-n="'+n+'" data-k="note" placeholder="Part number or spec" aria-label="Part number or spec for '+esc(it.full)+'"></div></div>';
-    }).join('');
-  }
-  copy.disabled=!list.length;copy.textContent='Copy list';
-}
-rows.addEventListener('click',function(e){var b=e.target.closest('.rm');if(b){list.splice(+b.dataset.n,1);save();render();}});
-rows.addEventListener('input',function(e){var n=e.target.dataset.n,key=e.target.dataset.k;if(n==null)return;
-  list[+n][key]=key==='qty'?Math.max(1,parseInt(e.target.value,10)||1):e.target.value;save();});
-copy.addEventListener('click',function(){
-  var text='Quote request (from the Triune concept demo)\n'+list.map(function(r){var it=byId[r.id];
-    return '- '+r.qty+' x '+it.full+(r.note?' ('+r.note+')':'');}).join('\n');
-  var done=function(ok){copy.textContent=ok?'Copied':'Copy failed';note.textContent=ok?'The list is on your clipboard. In a live version this would go to Triune on WhatsApp.':'Your browser blocked the clipboard. Select the rows and copy them by hand.';};
-  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(function(){done(true);},function(){done(false);});
-  else done(false);
+/* ---------- matching ---------- */
+var STOP={the:1,and:1,for:1,of:1,with:1,to:1,in:1,an:1,pcs:1,pc:1,nos:1,qty:1,ea:1,each:1,no:1,part:1,number:1,item:1,please:1,quote:1,required:1};
+function toks(s){return (String(s).toLowerCase().replace(/@/g,'a').match(/[a-z]+|\d+/g)||[]).filter(function(t){return !STOP[t]&&(t.length>1||/\d/.test(t));});}
+function norm(s){return String(s).toUpperCase().replace(/[^A-Z0-9]/g,'');}
+var df={};
+C.forEach(function(p){
+  var set={};toks(p.title+' '+p.brand+' '+p.part).forEach(function(t){set[t]=1;});
+  p.tok=set;p.ntok=Object.keys(set).length;
+  p.parts=p.part?p.part.split(/\s+\/\s+|\s*,\s*/).map(norm).filter(function(x){return x.length>=3;}):[];
+  Object.keys(set).forEach(function(t){df[t]=(df[t]||0)+1;});
 });
-document.getElementById('openList').addEventListener('click',function(e){current=null;opener=e.currentTarget;render();open();});
-document.getElementById('close').addEventListener('click',close);
-addEventListener('keydown',function(e){if(e.key==='Escape'&&drawer.classList.contains('open'))close();});
+function idf(t){return Math.log((C.length+1)/((df[t]||0)+0.5));}
 
-render();idle=performance.now();tick();
+function readQty(line){
+  var q=1,m,t=line.replace(/^\s*(?:[-•*]|\d{1,2}[.)])\s+/,'');
+  if((m=t.match(/\bq(?:ty|uantity)\b\s*[:=]?\s*(\d[\d,]*)/i))){q=m[1];t=t.replace(m[0],' ');}
+  else if((m=t.match(/(\d[\d,]*)\s*(?:pcs|pc|nos|ea|each|units?|sets?|pails?|drums?|pairs?|boxes|box|cans?|rolls?|kits)\b/i))){q=m[1];t=t.replace(m[0],' ');}
+  else if((m=t.match(/^\s*(\d{1,4})\s*[x×]\s+/i))){q=m[1];t=t.replace(m[0],' ');}
+  else if((m=t.match(/\s[x×]\s*(\d{1,5})\s*$/i))){q=m[1];t=t.replace(m[0],' ');}
+  else{
+    var cells=t.split(/\t|\s*[;|]\s*|,\s+/).map(function(c){return c.trim();}).filter(Boolean);
+    if(cells.length>1){
+      var last=cells[cells.length-1],first=cells[0];
+      if(/^\d{1,5}$/.test(last)){q=last;cells.pop();t=cells.join(' ');}
+      else if(/^\d{1,4}$/.test(first)){q=first;cells.shift();t=cells.join(' ');}
+    }
+  }
+  q=Math.max(1,Math.min(99999,parseInt(String(q).replace(/,/g,''),10)||1));
+  return {qty:q,text:t.replace(/[\s,;|\-–]+$/,'').replace(/\s+/g,' ').trim()};
+}
+
+function matchLine(text){
+  var qt=toks(text),N=norm(text),tot=0,seen={};
+  qt=qt.filter(function(t){if(seen[t])return false;seen[t]=1;return true;});
+  qt.forEach(function(t){tot+=idf(t);});
+  var scored=C.map(function(p){
+    var sh=0,n=0;qt.forEach(function(t){if(p.tok[t]){sh+=idf(t);n++;}});
+    var cov=tot?sh/tot:0,name=cov*0.9+(p.ntok?0.1*n/p.ntok:0),pl=0;
+    p.parts.forEach(function(pt){if(N.indexOf(pt)>-1&&(pt.length>=5||cov>=0.3))pl=Math.max(pl,pt.length);});
+    return {id:p.id,name:name,pl:pl,score:(pl?2+pl/100:0)+name};
+  }).sort(function(a,b){return b.score-a.score;});
+  var best=scored[0],how='none';
+  if(best&&best.pl)how='part';else if(best&&best.name>=0.72)how='name';else if(best&&best.name>=0.42)how='check';
+  if(how==='name'&&scored[1]&&best.name-scored[1].name<0.04)how='check';
+  return {how:how,pid:how==='none'?null:best.id,cands:scored.slice(0,5).filter(function(s){return s.score>0.2;}).map(function(s){return s.id;})};
+}
+
+/* ---------- quote list ---------- */
+var list=[];
+try{list=(JSON.parse(localStorage.getItem('triune-quote-desk'))||[]).filter(function(r){return r.pid==null||C[r.pid];});}catch(_){list=[];}
+function save(){try{localStorage.setItem('triune-quote-desk',JSON.stringify(list));}catch(_){}}
+function has(pid){return list.some(function(r){return r.pid===pid;});}
+var LABEL={part:'Matched by part number',name:'Matched by name',check:'Check this match',none:'Not in the catalogue',pick:'Picked by you'};
+
+function addProduct(pid,qty,src,how,cands){
+  var ex=pid!=null&&list.filter(function(r){return r.pid===pid;})[0];
+  if(ex){ex.qty+=qty;if(src&&!ex.src)ex.src=src;return;}
+  list.push({pid:pid,qty:qty,src:src||'',how:how,cands:cands||[]});
+}
+function thumb(p,cls){return '<img'+(cls?' class="'+cls+'"':'')+' loading="lazy" alt="" src="'+esc(SITE+p.img)+'" onerror="this.replaceWith(Object.assign(document.createElement(\'div\'),{className:\'noimg\',textContent:\'No photo\'}))">';}
+
+function renderList(){
+  $('count').textContent=list.length;
+  $('list').hidden=!list.length;
+  var n={part:0,name:0,check:0,none:0,pick:0};
+  list.forEach(function(r){n[r.how]++;});
+  var bits=[];
+  if(n.part)bits.push(n.part+' matched by part number');
+  if(n.name)bits.push(n.name+' matched by name');
+  if(n.pick)bits.push(n.pick+' picked by you');
+  if(n.check)bits.push(n.check+' to check');
+  if(n.none)bits.push(n.none+' not in the catalogue');
+  $('sum').textContent=list.length+(list.length===1?' line: ':' lines: ')+bits.join(', ')+'.';
+  $('rows').innerHTML=list.map(function(r,i){
+    var p=r.pid!=null?C[r.pid]:null;
+    var opts=r.how!=='part'&&(r.cands.length>1||(!p&&r.cands.length))?'<select data-i="'+i+'" aria-label="Change the match for this line">'+
+      (p?'':'<option value="">Pick a product instead</option>')+
+      r.cands.map(function(id){return '<option value="'+id+'"'+(id===r.pid?' selected':'')+'>'+esc(C[id].title+(C[id].part?' ('+C[id].part+')':''))+'</option>';}).join('')+
+      (p?'<option value="">None of these</option>':'')+'</select>':'';
+    return '<div class="li">'+(p?thumb(p):'<div class="noimg">?</div>')+
+      '<div><h3>'+(p?esc(p.title):esc(r.src))+'</h3>'+
+      '<p class="meta"><span class="tag '+r.how+'">'+LABEL[r.how]+'</span>'+(p?esc([p.brand,p.part?'Part no. '+p.part:''].filter(Boolean).join(', ')):'Triune would quote this line by hand.')+'</p>'+
+      (p&&r.src?'<p class="src">Your line: '+esc(r.src)+'</p>':'')+opts+'</div>'+
+      '<div class="q"><input type="number" min="1" value="'+r.qty+'" data-i="'+i+'" aria-label="Quantity"></div>'+
+      '<button type="button" class="rm" data-i="'+i+'">Remove</button></div>';
+  }).join('');
+  $('copy').textContent='Copy list';
+}
+$('rows').addEventListener('click',function(e){var b=e.target.closest('.rm');if(b){list.splice(+b.dataset.i,1);save();renderList();renderGrid();}});
+$('rows').addEventListener('input',function(e){if(e.target.type==='number'){list[+e.target.dataset.i].qty=Math.max(1,parseInt(e.target.value,10)||1);save();}});
+$('rows').addEventListener('change',function(e){
+  if(e.target.tagName!=='SELECT')return;
+  var r=list[+e.target.dataset.i],v=e.target.value;
+  if(v===''){r.pid=null;r.how='none';if(!r.src)r.src='Unmatched line';}else{r.pid=+v;r.how='pick';}
+  save();renderList();renderGrid();
+});
+
+function asText(){
+  return 'Quote request (from the Triune concept demo)\n'+list.map(function(r){
+    var p=r.pid!=null?C[r.pid]:null;
+    return '- '+r.qty+' x '+(p?p.title+(p.part?' ['+p.part+']':''):r.src+' (not matched)');
+  }).join('\n');
+}
+$('copy').addEventListener('click',function(){
+  var done=function(ok){$('copy').textContent=ok?'Copied':'Copy failed';};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(asText()).then(function(){done(true);},function(){done(false);});else done(false);
+});
+$('csv').addEventListener('click',function(){
+  var q=function(s){return '"'+String(s).replace(/"/g,'""')+'"';};
+  var out=['Your line,Product,Brand,Part number,Qty,Match'].concat(list.map(function(r){
+    var p=r.pid!=null?C[r.pid]:null;
+    return [q(r.src),q(p?p.title:''),q(p?p.brand:''),q(p?p.part:''),r.qty,q(LABEL[r.how])].join(',');
+  })).join('\r\n');
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([out],{type:'text/csv'}));a.download='triune-quote-list.csv';
+  document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href);},1000);
+});
+$('clear').addEventListener('click',function(){list=[];save();renderList();renderGrid();$('paste').focus();});
+$('toList').addEventListener('click',function(){
+  if(list.length)$('list').scrollIntoView();else $('paste').focus();
+});
+
+/* ---------- paste and match ---------- */
+var SAMPLE=['10 x Cat 1R-0756 fuel filter','Shell Tellus S2 M 46 - 4 drums','Jet-Lube API Modified 22119, 6 pails','TA40117 angle grinder tether qty 12','FA310022\t5','UVEX safety glasses 1010950 x 40','2 pcs 10" PRO pipe handling tool','Bestolife 3010 Ultra, 8 pails','1R-0749  x 24','MD Totco W-15 instrument fluid 3 drums','dynex tagline w/ karabiner 6 nos','Fire blanket 1.8m, 4 pcs'].join('\n');
+$('sample').addEventListener('click',function(){$('paste').value=SAMPLE;$('paste').focus();});
+$('match').addEventListener('click',function(){
+  var lines=$('paste').value.split(/\r?\n/).map(function(l){return l.trim();}).filter(function(l){return l&&/[a-z0-9]/i.test(l);});
+  if(!lines.length){$('fine').textContent='Paste at least one line first, or use the sample list.';$('paste').focus();return;}
+  lines.forEach(function(l){var q=readQty(l),m=matchLine(q.text);addProduct(m.pid,q.qty,l,m.how,m.cands);});
+  save();renderList();renderGrid();$('paste').value='';
+  $('fine').textContent=lines.length+(lines.length===1?' line':' lines')+' read. Check the list below, then paste more if you need to.';
+  $('list').scrollIntoView();
+});
+
+/* ---------- rig ---------- */
+var Z=[
+ {id:'height',label:'Tools at height',sub:'Dropped object prevention for work up the derrick',cats:['Tethered Tools','Tethered Tools (VDE)','Tethered Tool Kits','Tool Lanyards','Tool Tethering','Tool Bags','Tool Belts','Drop Protection','Asset Management'],pill:[560,68],dot:[470,90]},
+ {id:'board',label:'Monkey board',sub:'Fall protection and rescue',cats:['Harnesses','Lanyards/Blocks','Anchorage','Rescue','Accessories'],pill:[160,120],dot:[380,160]},
+ {id:'crew',label:'Crew',sub:'PPE and safety',cats:['PPE'],pill:[140,286],dot:[322,352]},
+ {id:'floor',label:'Rig floor',sub:'Rig tools and pipe handling',cats:['RIG Tools','Excavator & Heavy Equipment Tools'],pill:[650,300],dot:[572,362]},
+ {id:'bop',label:'Wellhead and BOP',sub:'BOP test units',cats:['BOP Test Units'],pill:[346,556],dot:[450,528]},
+ {id:'mud',label:'Mud pumps',sub:'Flowline and pressure control',cats:['Flowline Items'],pill:[604,556],dot:[670,528]},
+ {id:'engine',label:'Engines',sub:'Rig spare parts and filters',cats:['RIG Spare Parts']
+,pill:[834,556],dot:[889,528]},
+ {id:'lube',label:'Lube store',sub:'Lubricants, fluids and chemicals',cats:['Lubricants','Fluids','Chemicals'],pill:[18,556],dot:[57,528]}
+];
+var NS='http://www.w3.org/2000/svg',zone=null,sub='',shown=12;
+function el(n,a){var e=document.createElementNS(NS,n);Object.keys(a).forEach(function(k){e.setAttribute(k,a[k]);});return e;}
+Z.forEach(function(z){
+  z.items=C.filter(function(p){return z.cats.indexOf(p.cat)>-1;});
+  var g=document.querySelector('#rig .zone[data-z="'+z.id+'"]');z.g=g;
+  var w=z.label.length*11.6+30,x=z.pill[0],y=z.pill[1];
+  var lx=Math.max(x,Math.min(x+w,z.dot[0])),ly=Math.max(y,Math.min(y+34,z.dot[1]));
+  g.appendChild(el('path',{'class':'lead',d:'M'+lx+' '+ly+'L'+z.dot[0]+' '+z.dot[1]}));
+  g.appendChild(el('circle',{'class':'ring',cx:z.dot[0],cy:z.dot[1],r:9}));
+  g.appendChild(el('circle',{'class':'dot',cx:z.dot[0],cy:z.dot[1],r:8}));
+  var pg=el('g',{'class':'pill'});pg.appendChild(el('rect',{x:x,y:y,width:w,height:34,rx:17}));
+  var t=el('text',{x:x+15,y:y+24});t.textContent=z.label;pg.appendChild(t);g.appendChild(pg);
+  g.setAttribute('tabindex','0');g.setAttribute('role','button');
+  g.setAttribute('aria-label',z.label+': '+z.sub+', '+z.items.length+' products');
+  g.addEventListener('click',function(){pick(z,true);});
+  g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(z,true);}});
+  var c=document.createElement('button');c.type='button';c.className='chip';c.textContent=z.label;z.chip=c;
+  c.addEventListener('click',function(){pick(z,true);});$('zchips').appendChild(c);
+});
+function pick(z,scroll){
+  zone=z;sub='';shown=12;$('zf').value='';
+  Z.forEach(function(o){o.g.classList.toggle('on',o===z);o.chip.setAttribute('aria-pressed',o===z?'true':'false');});
+  $('zt').textContent=z.label;
+  $('zs').textContent=z.sub+'. '+z.items.length+' products.';
+  var counts={};z.items.forEach(function(p){counts[p.cat]=(counts[p.cat]||0)+1;});
+  var cs=Object.keys(counts);
+  $('cats').innerHTML=cs.length>1?['<button type="button" class="chip" data-c="" aria-pressed="true">All '+z.items.length+'</button>'].concat(cs.map(function(c){return '<button type="button" class="chip" data-c="'+esc(c)+'" aria-pressed="false">'+esc(c)+' '+counts[c]+'</button>';})).join(''):'';
+  renderGrid();
+  if(scroll)$('browse').scrollIntoView();
+}
+$('cats').addEventListener('click',function(e){var b=e.target.closest('.chip');if(!b)return;sub=b.dataset.c;shown=12;
+  [].forEach.call($('cats').children,function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});renderGrid();});
+$('zf').addEventListener('input',function(){shown=12;renderGrid();});
+$('more').addEventListener('click',function(){shown=9999;renderGrid();});
+function renderGrid(){
+  if(!zone)return;
+  var f=$('zf').value.trim().toLowerCase(),fn=norm(f);
+  var items=zone.items.filter(function(p){
+    if(sub&&p.cat!==sub)return false;
+    if(!f)return true;
+    return (p.title+' '+p.brand).toLowerCase().indexOf(f)>-1||(fn.length>1&&norm(p.part+p.title).indexOf(fn)>-1);
+  });
+  $('grid').innerHTML=items.length?items.slice(0,shown).map(function(p){
+    var on=has(p.id);
+    return '<article class="card"><div class="ph">'+thumb(p)+'</div><div class="cb">'+
+      '<p class="meta">'+esc(p.brand||p.cat)+'</p><h3><a href="'+esc(SITE+'/product/'+p.slug+'/')+'" target="_blank" rel="noopener">'+esc(p.title)+'</a></h3>'+
+      (p.part?'<p class="pn">Part no. '+esc(p.part)+'</p>':'')+'<div class="sp"></div>'+
+      '<button type="button" class="btn '+(on?'ghost':'main')+'" data-add="'+p.id+'"'+(on?' disabled':'')+'>'+(on?'On your list':'Add to list')+'</button></div></article>';
+  }).join(''):'<p class="none">Nothing in this area matches that filter. Clear the filter or pick another part of the rig.</p>';
+  $('more').hidden=items.length<=shown;
+  $('more').textContent='Show all '+items.length;
+}
+$('grid').addEventListener('click',function(e){var b=e.target.closest('[data-add]');if(!b)return;
+  addProduct(+b.dataset.add,1,'','pick',[]);save();renderList();renderGrid();});
+
+renderList();pick(Z[3],false);
 })();
 </script>
 </body>
